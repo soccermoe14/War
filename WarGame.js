@@ -12,11 +12,11 @@ o	Ties result in zero points for both Players
 •	After all cards have been played, display the score and declare the winner.
 •	Write a Unit Test using Mocha and Chai for at least one of the functions you write.*/
 
-const suits = ['Clubs', 'Hearts', 'Diamonds', 'Spades'];
-const ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
-const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+const suits = ['Clubs', 'Hearts', 'Diamonds', 'Spades']; //declare variable that conatains array of string values for cards suits
+const ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];//declare variable that contains array of string values for card ranks
+const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]; //declare variable that contains array of numerical values for cards to keep score
 
-class Card {
+class Card { //blueprint for what cards are comprised of
     constructor(cardSuit, cardValue, cardRank) {
         this.cardSuit = cardSuit;
         this.cardRank = cardRank;
@@ -25,9 +25,9 @@ class Card {
 }
 
 
-class Deck {
+class Deck { //blue print for what deck of cards is comprised of
     constructor() {
-        this.cards = [];
+        this.cards = []; //declares cards object as open array to pass card class values through in order to create deck
 
             for (let suit in suits) {
                 for (let rank in ranks) {
@@ -37,20 +37,22 @@ class Deck {
         }
     }
 
-//function to shuffle the cards that I really do not understand. 
+//function to shuffle the cards that I really do not understand and copied it from the internet. JavaScript does not have a preprogrammed funtion for shuffling. 
+//Apparently the best way to get randomized (shuffled) cards is to use the Fisher-Yates method. But I only got that to work building the deck a different way. 
     shuffleDeck() {
-        let location1, location2, tmp;
-        for (let i = 0; i < 1000; i++) {
-            location1 = Math.floor((Math.random() * this.cards.length));
+        let location1, location2, tmp; //just like when shuffling by hand, you have cards in right hand and cards in left hand, then a final pile once combined
+        for (let i = 0; i < 1000; i++) { //for loop that iterates the cards 1000 times in order to randomize
+            location1 = Math.floor((Math.random() * this.cards.length)); //array cards.length should take all the suits multiplied by all the ranks; equalling 52 cards tota;
             location2 = Math.floor((Math.random() * this.cards.length));
+            //^^math random generates random number while math floor returns the number by decreasing the value to the nearest integer
                 tmp = this.cards[location1];
-                this.cards[location1] = this.cards[location2];
-                this.cards[location2] = tmp;
+                this.cards[location1] = this.cards[location2]; //generates random number and swaps the cards...I think
+                this.cards[location2] = tmp; 
         }
     }
 }
 
-//Player class that 
+//Player class that holds the players hand of value for the player score
 class Player {
     constructor() {
         this.hand = [];
@@ -58,36 +60,36 @@ class Player {
     }
 }
 
-const warDeck = new Deck();
-warDeck.shuffleDeck();
+const warDeck = new Deck(); //declares variable for a new deck of cards
+warDeck.shuffleDeck(); //creates a new deck of cards and calls the shuffle function
 
-let p1 = new Player();
-let p2 = new Player();
+let p1 = new Player(); //declares variable for player one
+let p2 = new Player(); //declares variable for player two
 
 function dealDeck(warDeck) { //function to divide half of the shuffled cards evenly amognst players 1 & 2
-    let dividedDeck = Math.ceil(warDeck.cards.length / 2);
-p1.hand = warDeck.cards.slice(0, dividedDeck);
-p2.hand = warDeck.cards.slice(-dividedDeck);
+    let dividedDeck = Math.ceil(warDeck.cards.length / 2); //declares variable that divides the deck of cards and rounds up to the nearest integer
+p1.hand = warDeck.cards.slice(0, dividedDeck); //declares player 1's hand passing through array and return index 0 thru the halfway point (dividedDeck)
+p2.hand = warDeck.cards.slice(-dividedDeck); //declares player 2's hand by passing through the array and returning the other half of the dividedDeck
 }
 
 
-dealDeck(warDeck);
-console.log(p1.hand);
+dealDeck(warDeck); //calls the function to deal the cards into a new deck
 
-console.log("Let's play war!!!"); //start of game play (game logic)
 
-for (let i = 0; i < 26; i++) { 
+console.log("Let's play war!!!"); //start of game play (game logic) now that we have a deck of cards that has been shuffled and dealt between 2 players
 
-    const p1Card = p1.hand.pop();//removes 1 card from player's hand
-    const p2Card = p1.hand.pop();
+for (let i = 0; i < 26; i++) { //for loop to iterate through each players hand (26 iterations  for half the deck of cards)
 
-    //prints the round by iteration of loop plus 1 for each subsequent turn
+    const p1Card = p1.hand.pop();//removes 1 card from player's hand to play turn
+    const p2Card = p1.hand.pop();//removes 1 card from the player's hand to play turn
 
-    
+    //below: prints the round of play based on the iteration, increasing by 1 after each iteration (turn) and displays the card each player has turned over for that round
     console.log(`Round ${(i + 1)}\n 
     Player 1: ${p1Card.cardRank} of ${p1Card.cardSuit}\n
     Player 2: ${p2Card.cardRank} of ${p2Card.cardSuit}\n`);
 
+    //below: this else if loop is supposed to compare the values of each card played and determine the winner based on the player with the highest value card
+    //subsequently printing the winner to the console as well as a comparison of each players score for the cards played that round
         if (p1.cardValue > p2.cardValue) {
             p1.score++;
             console.log(`
@@ -98,10 +100,12 @@ for (let i = 0; i < 26; i++) {
             console.log(`
             Player 2 wins round ${(i + 1)}\n
             Player 1 Score = ${p1.score} vs Player 2 Score = ${p2.score}\n`);
-        } else 
+        } else //else statement that would execute if both players cards were of equal value
                 console.log(`Tie for round ${(i + 1)}\n
             Player 1 Score = ${p1.score} vs Player 2 Score = ${p2.score}\n`);
         }
+
+    //below: once all iterations of turn are completed, this should print the game over as well as the final score and declare a winner based on which player has the higher score
     
     console.log(`Game Over!!!\n
     Player 1 Final Score = ${p1.score} vs Player 2 Final Score = ${p2.score}`);
