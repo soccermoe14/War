@@ -12,29 +12,27 @@ o	Ties result in zero points for both Players
 •	After all cards have been played, display the score and declare the winner.
 •	Write a Unit Test using Mocha and Chai for at least one of the functions you write.*/
 
+const suits = ['Clubs', 'Hearts', 'Diamonds', 'Spades'];
+const ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
 class Card {
-    constructor(suit, rank, value) {
-        this.suit = suit;
-        this.rank = rank;
-        this.value = value;
+    constructor(cardSuit, cardValue, cardRank) {
+        this.cardSuit = cardSuit;
+        this.cardRank = cardRank;
+        this.cardValue = cardValue;
     }
 }
+
 
 class Deck {
     constructor() {
         this.cards = [];
-    }
-//function to create a deck of cards 
-    createDeck() {
-        let suits = ['Clubs', 'Hearts', 'Diamonds', 'Spades'];
-        let ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
-        let values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-//nested for loop that loops thorugh ranks then suits and creates new array including values
-        for (let i = 0; i < suits.length; i++) {
-            for (let j = 0; j< ranks.length; j++) {
-                this.cards.push(new Card(suits[i], ranks[j], values [j]));
+            for (let suit in suits) {
+                for (let rank in ranks) {
+                    for (let value in values)
+                    this.cards.push(new Card(suits[suit], ranks[rank], values[value]));
             }
         }
     }
@@ -52,47 +50,69 @@ class Deck {
     }
 }
 
-//Player class that will pass through the array (deal) the shuffled deck of cards
+//Player class that 
 class Player {
-    constructor(name) {
-        this.playerName = name;
-        this.playerCards = [];
+    constructor() {
+        this.hand = [];
+        this.score = 0;
     }
 }
 
-class War {
-    constructor() {
-        this.players = [];
-    }
-    start(playerOneName, playerTwoName) {
-        this.players.push(new Player(playerOneName));
-        this.players.push(new Player(playerTwoName));
-        let d = new Deck;
-        d.createDeck();
-        d.shuffleDeck();
-        this.players[0].playerCards = d.cards.slice(0, 26);
-        this.players[1].playerCards = d.cards.slice(26, 52);
-    }
+const warDeck = new Deck();
+warDeck.shuffleDeck();
+
+let p1 = new Player();
+let p2 = new Player();
+
+function dealDeck(warDeck) { //function to divide half of the shuffled cards evenly amognst players 1 & 2
+    let dividedDeck = Math.ceil(warDeck.cards.length / 2);
+p1.hand = warDeck.cards.slice(0, dividedDeck);
+p2.hand = warDeck.cards.slice(-dividedDeck);
+}
+
+
+dealDeck(warDeck);
+console.log(p1.hand);
+
+console.log("Let's play war!!!"); //start of game play (game logic)
+
+for (let i = 0; i < 26; i++) { 
+
+    const p1Card = p1.hand.pop();//removes 1 card from player's hand
+    const p2Card = p1.hand.pop();
+
+    //prints the round by iteration of loop plus 1 for each subsequent turn
 
     
- }
+    console.log(`Round ${(i + 1)}\n 
+    Player 1: ${p1Card.cardRank} of ${p1Card.cardSuit}\n
+    Player 2: ${p2Card.cardRank} of ${p2Card.cardSuit}\n`);
 
-
-let warGame = new War();/*declares a variable that calls the war class which will run all the functions to create
-a deck of 52 cards, shuffle the deck, create 2 players, deal 26 shuffled cards to each player*/
-
-warGame.start('Marin', 'Taylor');
-console.log(warGame.players);
-
-/*Below are testing notes from going through above code -- 
-const d = new Deck();//declares variable that calls the create deck function
-d.createDeck();//calls create deck funtion to d (new Deck0 variable)
-d.shuffleDeck()//calls shuffle funcion to d (new Deck) variable
-console.log(d.cards); //prints deck of 52 cards with suit, rank, and value of card; shuffled*/
-
-//Now that the players have 26 cards each, need to initiate game play
-
-
+        if (p1.cardValue > p2.cardValue) {
+            p1.score++;
+            console.log(`
+            Player 1 wins round ${(i + 1)}\n
+            Player 1 Score = ${p1.score} vs Player 2 Score = ${p2.score}\n`);
+        } else if (p1Card.cardValue < p2.cardValue) {
+            p2.score++;
+            console.log(`
+            Player 2 wins round ${(i + 1)}\n
+            Player 1 Score = ${p1.score} vs Player 2 Score = ${p2.score}\n`);
+        } else 
+                console.log(`Tie for round ${(i + 1)}\n
+            Player 1 Score = ${p1.score} vs Player 2 Score = ${p2.score}\n`);
+        }
+    
+    console.log(`Game Over!!!\n
+    Player 1 Final Score = ${p1.score} vs Player 2 Final Score = ${p2.score}`);
+    if (p1.score > p2.score) {
+        console.log(`Player 1 is the winner!!!`);
+    } else if (p1.score < p2.score) {
+        console.log(`Player 2 is the winner!!!`);
+    } else {
+        console.log(`Tie game, no winners...try again!`);
+}
+        
 
 
 
